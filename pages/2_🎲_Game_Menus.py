@@ -1,5 +1,6 @@
 import time
 import random
+import logging
 import streamlit as st
 
 from utils import *
@@ -53,6 +54,8 @@ if 'is_logged_in' in st.session_state and st.session_state['is_logged_in'] == Tr
         with col1:
             st.write("Guess the Number..")
             print(secret_number)
+            logging.warning(secret_number)
+            
             if 'game_over' not in st.session_state:
                 st.session_state['game_over'] = False
 
