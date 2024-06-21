@@ -89,6 +89,21 @@ def get_total_guessing_in_one_game(game_history_id, player_id):
     return results
 
 
+def get_leaderboard():
+    query = """
+    SELECT p.name, COUNT(*) AS skor, gh.game_date
+    FROM guesses AS g
+    JOIN game_histories AS gh ON gh.id = g.game_history_id
+    JOIN player AS p ON p.id = g.player_id
+    GROUP BY p.name, gh.game_date
+    ORDER BY gh.game_date ASC
+    """
+    db.set_query(query)
+    results = db.execute_query(False)
+    return results
+
+
+
 
 
 
