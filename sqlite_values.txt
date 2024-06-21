@@ -1,0 +1,58 @@
+BEGIN TRANSACTION;
+CREATE TABLE game_histories (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        player_id INTEGER NOT NULL,
+        game_id INTEGER NOT NULL,
+        game_level_id INTEGER NOT NULL,
+        game_date DATETIME DEFAULT CURRENT_TIMESTAMP,
+        score INTEGER
+    );
+CREATE TABLE game_levels (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        game_level_name TEXT NOT NULL
+    );
+INSERT INTO "game_levels" VALUES(1,'Easy');
+INSERT INTO "game_levels" VALUES(2,'Medium');
+INSERT INTO "game_levels" VALUES(3,'Hard');
+CREATE TABLE game_types (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        game_type_name TEXT NOT NULL
+    );
+INSERT INTO "game_types" VALUES(1,'number');
+INSERT INTO "game_types" VALUES(2,'letter');
+INSERT INTO "game_types" VALUES(3,'words');
+CREATE TABLE games (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        game_type_id INTEGER NOT NULL,
+        game_name TEXT NOT NULL
+    );
+INSERT INTO "games" VALUES(1,1,'Bulls and Cows');
+INSERT INTO "games" VALUES(2,2,'Hangman');
+INSERT INTO "games" VALUES(3,3,'Scrambled Words');
+CREATE TABLE guesses (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        game_history_id INTEGER NOT NULL,
+        player_id INTEGER NOT NULL,
+        guess TEXT NOT NULL,
+        correct_numbers INTEGER NOT NULL,
+        correct_positions INTEGER NOT NULL
+    );
+CREATE TABLE leaderboard (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        player_id INTEGER NULL,
+        score INTEGER NULL
+    );
+CREATE TABLE player (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        name TEXT NULL,
+        type TEXT NULL,
+        username TEXT NULL,
+        password TEXT NULL
+    );
+INSERT INTO "player" VALUES(1,'Rizumiya','admin','rend','ray');
+DELETE FROM "sqlite_sequence";
+INSERT INTO "sqlite_sequence" VALUES('game_types',3);
+INSERT INTO "sqlite_sequence" VALUES('games',3);
+INSERT INTO "sqlite_sequence" VALUES('game_levels',3);
+INSERT INTO "sqlite_sequence" VALUES('player',1);
+COMMIT;
