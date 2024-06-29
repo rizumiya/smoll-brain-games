@@ -51,27 +51,35 @@ def save_history_guessing(game_history_id, player_id, guess, correct_numbers, co
     )
     db.execute_query()
 
-
-def create_new_game(player_id, game_type_id):
-    db.set_query(
-        "INSERT INTO game_histories (player_id, game_id, game_level_id) VALUES (?, ?, ?)",
-        (player_id, game_type_id, 1)
-    )
+def create_new_game(fields, values):
+    attrs = (", ").join(fields)
+    values = (", ").join(values)
+    query = f"INSERT INTO game_histories ({attrs}) VALUES ({values})"
+    db.set_query(query)
     db.execute_query()
     db.set_query("SELECT MAX(id) FROM game_histories")
     records = db.execute_query(False)
     return records
 
 
-def get_guessing_history_current_game(game_history_id, player_id):
+def get_guessing_history_current_game(game_history_id, player_id=None):
     query = """
-    SELECT g.guess, g.correct_numbers, g.correct_positions 
+    SELECT g.guess, g.correct_numbers, g.correct_positions
     FROM guesses AS g
     JOIN game_histories AS gh ON gh.id = g.game_history_id
-    JOIN player AS p ON p.id = g.player_id
-    WHERE p.id = ? AND gh.id = ?
     """
-    db.set_query(query, (player_id, game_history_id))
+    params = []
+    params.append(game_history_id)
+
+    if player_id is not None:
+        query += "JOIN player AS p ON p.id = g.player_id"
+        params.append(player_id)
+
+    query += " WHERE gh.id = ?"
+    if player_id is not None:
+        query += " AND p.id = ?"
+
+    db.set_query(query, params)
     results = db.execute_query(False)
     return results
 
@@ -96,12 +104,11 @@ def get_leaderboard():
     JOIN game_histories AS gh ON gh.id = g.game_history_id
     JOIN player AS p ON p.id = g.player_id
     GROUP BY p.name, gh.game_date
-    ORDER BY gh.game_date ASC
-    """
+    ORDER BY skor ASC /*gh.game_date ASC*/
+    """ 
     db.set_query(query)
     results = db.execute_query(False)
     return results
-
 
 
 
@@ -128,7 +135,7 @@ def initial_db():
     CREATE TABLE IF NOT EXISTS guesses (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         game_history_id INTEGER NOT NULL,
-        player_id INTEGER NOT NULL,
+        player_id INTEGER NULL,
         guess TEXT NOT NULL,
         correct_numbers INTEGER NOT NULL,
         correct_positions INTEGER NOT NULL
@@ -172,7 +179,7 @@ def initial_db():
     create_history_table = """
     CREATE TABLE IF NOT EXISTS game_histories (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
-        player_id INTEGER NOT NULL,
+        player_id INTEGER NULL,
         game_id INTEGER NOT NULL,
         game_level_id INTEGER NOT NULL,
         game_date DATETIME DEFAULT CURRENT_TIMESTAMP,

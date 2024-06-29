@@ -38,6 +38,7 @@ with tabs[0]:
                 if user_id:
                     # add to session state
                     st.session_state['user_id'] = user_id[0][0]
+                    del st.session_state['guest']
                     st.session_state['is_logged_in'] = True
                     st.success('Welcome back King!, You may proceed to the next step..', icon='🤓')
                 else:
@@ -96,4 +97,8 @@ with tabs[2]:
         You're just stupid? 🤔
         """.replace("    ", "")
         )
-    st.button('Continue as Guest', key='guest_btn')
+    guest_btn = st.button('Continue as Guest', key='guest_btn')
+    if guest_btn:
+        st.session_state['user_id'] = None
+        st.session_state['guest'] = True
+        st.success('Welcome', icon="😒")
