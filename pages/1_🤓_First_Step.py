@@ -38,7 +38,8 @@ with tabs[0]:
                 if user_id:
                     # add to session state
                     st.session_state['user_id'] = user_id[0][0]
-                    del st.session_state['guest']
+                    if 'guest' in st.session_state:
+                        del st.session_state['guest']
                     st.session_state['is_logged_in'] = True
                     st.success('Welcome back King!, You may proceed to the next step..', icon='🤓')
                 else:
