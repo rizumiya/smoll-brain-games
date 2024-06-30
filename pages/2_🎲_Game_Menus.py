@@ -72,10 +72,11 @@ if ('is_logged_in' in st.session_state
                 st.session_state['game_over'] = False
 
             if not st.session_state['game_over']:
-                guess = st.text_input(
-                    "Masukkan tebakan Anda:", max_chars=4, key="guess_input")
+                with st.form('form_guess', True):
+                    guess = st.text_input("Masukkan tebakan Anda:", max_chars=4, key="guess_input", help="Type 4 digits and hit Enter key")
+                    submitted = st.form_submit_button("Submit")
 
-                if guess:
+                if submitted:
                     if 'have_played' not in st.session_state:
                         st.session_state['have_played'] = True
                     if guess.isdigit() and len(guess) == 4 and len(set(guess)) == 4:
